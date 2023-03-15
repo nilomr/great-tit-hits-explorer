@@ -11,6 +11,13 @@ class Sidebar extends Component {
     this.props.selectAlgorithm(v)
   }
 
+  handleToggleProjection = () => {
+    const { algorithm_choice, algorithm_options } = this.props;
+    const numOptions = algorithm_options.length;
+    const newChoice = (algorithm_choice + 1) % numOptions;
+    this.props.selectAlgorithm(algorithm_options[newChoice])
+  }
+
   render() {
     let {
       sidebar_orientation,
@@ -25,7 +32,7 @@ class Sidebar extends Component {
     } = this.props
 
     return (
-      <div
+      <div class='sidebar'
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -35,26 +42,6 @@ class Sidebar extends Component {
       >
         <div>
           {' '}
-          <div
-            style={{
-              padding: grem / 2,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>Algorithm:</div>
-            <select
-              onChange={this.handleSelectAlgorithm}
-              value={algorithm_options[algorithm_choice]}
-            >
-              {algorithm_options.map((option, index) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
           <div
             style={{
               display: 'flex',
@@ -67,12 +54,21 @@ class Sidebar extends Component {
                 ref={side_canvas => {
                   this.side_canvas = side_canvas
                 }}
-                id='side-img'
+                class='side-img'
                 width={sidebar_image_size}
                 height={sidebar_image_size}
               />
             </div>
+
+
             <div style={{ flexGrow: 1 }}>
+              <button
+                class='toggle-projection'
+                onClick={this.handleToggleProjection}
+              >
+                START
+              </button>
+
               <div
                 id="label"
                 style={{

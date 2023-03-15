@@ -3,20 +3,18 @@ import Layout from './Layout'
 import * as _ from 'lodash'
 import * as d3 from 'd3'
 
-let algorithm_options = ['UMAP', 'T-SNE', 'UMAP min_dist=0.8']
+let algorithm_options = ['UMAP', 'T-SNE']
 let algorithm_embedding_keys = [
-  'mnist_embeddings',
-  'tsne_mnist_embeddings',
-  'md08_umap_mnist_embeddings',
+  'bird_embedding',
+  'tsne_mnist_embeddings'
 ]
 
 class Data extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      mnist_embeddings: null,
+      bird_embedding: null,
       mnist_labels: null,
-      md08_umap_mnist_embeddings: null,
     }
   }
 
@@ -35,18 +33,18 @@ class Data extends Component {
   }
 
   componentDidMount() {
-    fetch(`${process.env.PUBLIC_URL}/mnist_embeddings.json`)
+    fetch(`${process.env.PUBLIC_URL}/bird_embedding.json`)
       .then(response => response.json())
-      .then(mnist_embeddings => {
-        let scaled_embeddings = this.scaleEmbeddings(mnist_embeddings)
+      .then(bird_embedding => {
+        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
         this.setState({
-          mnist_embeddings: scaled_embeddings,
+          bird_embedding: scaled_embeddings,
         })
       })
     fetch(`${process.env.PUBLIC_URL}/md08_umap_mnist_embeddings.json`)
       .then(response => response.json())
-      .then(mnist_embeddings => {
-        let scaled_embeddings = this.scaleEmbeddings(mnist_embeddings)
+      .then(bird_embedding => {
+        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
         console.log('got em')
         this.setState({
           md08_umap_mnist_embeddings: scaled_embeddings,
@@ -54,8 +52,8 @@ class Data extends Component {
       })
     fetch(`${process.env.PUBLIC_URL}/tsne_mnist_embeddings.json`)
       .then(response => response.json())
-      .then(mnist_embeddings => {
-        let scaled_embeddings = this.scaleEmbeddings(mnist_embeddings)
+      .then(bird_embedding => {
+        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
         this.setState({
           tsne_mnist_embeddings: scaled_embeddings,
         })
@@ -71,7 +69,7 @@ class Data extends Component {
 
   render() {
     console.log(this.state)
-    return this.state.mnist_embeddings && this.state.mnist_labels ? (
+    return this.state.bird_embedding && this.state.mnist_labels ? (
       <Layout
         {...this.state}
         algorithm_options={algorithm_options}

@@ -97,7 +97,7 @@ class Layout extends Component {
 
   render() {
     let {
-      mnist_embeddings,
+      bird_embedding,
       tsne_mnist_embeddings,
       md08_umap_mnist_embeddings,
       mnist_labels,
@@ -107,7 +107,6 @@ class Layout extends Component {
     let {
       ww,
       wh,
-      sidebar_height,
       hover_index,
       show_about,
       algorithm_choice,
@@ -148,7 +147,7 @@ class Layout extends Component {
         height: 'auto',
         bottom: 0,
       }
-      main_style = { width: ww, height: wh - sidebar_height }
+      main_style = { width: ww, height: wh }
       sidebar_image_size = font_size * line_height * 3
       sidebar_orientation = 'horizontal'
     } else if (ww < 800 + 600) {
@@ -196,7 +195,7 @@ class Layout extends Component {
             this.sidebar_mount = sidebar_mount
           }}
         >
-          <Sidebar
+          <Sidebar class='sidebar'
             sidebar_orientation={sidebar_orientation}
             sidebar_image_size={sidebar_image_size}
             grem={grem}
@@ -211,11 +210,11 @@ class Layout extends Component {
             selectAlgorithm={this.selectAlgorithm}
           />
         </div>
-        <div style={main_style}>
+        <div class='main' style={main_style}>
           <Projection
             width={main_style.width}
             height={main_style.height}
-            mnist_embeddings={mnist_embeddings}
+            bird_embedding={bird_embedding}
             tsne_mnist_embeddings={tsne_mnist_embeddings}
             md08_umap_mnist_embeddings={md08_umap_mnist_embeddings}
             mnist_labels={mnist_labels}

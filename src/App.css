@@ -2,13 +2,56 @@
   box-sizing: border-box;
 }
 
-#side-img {
-  border-radius: 200px;
+.sidebar {
+  margin: 1em;
+}
+
+.side-img {
+  border-radius: 400px;
+  width: 100%;
 }
 
 #label {
-  border-radius: 200px;
+  border-radius: 10px;
 }
+
+.toggle-projection {
+  border-radius: 10px;
+  position: relative;
+  display: block;
+  width: 200px;
+  height: 25px;
+  background-color: #368ea8bb;
+  text-decoration: none;
+  text-align: center;
+  margin-bottom: 1em;
+  margin-top: 1em;
+  transition: background-color 0.05s ease-in-out;
+}
+
+.toggle-projection:hover {
+  background-color: #368da8;
+
+}
+
+/* add rule for when media is mless than 800px: */
+
+
+@media (min-width: 800px) {
+  .toggle-projection {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* @media (max-width: 800px) {
+  .toggle-projection {
+    left: auto;
+    transform: translateX(0);
+    display: block;
+  }
+} */
+
 
 html {
   font-size: 16px;

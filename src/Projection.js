@@ -93,10 +93,9 @@ class Projection extends Component {
       }
 
       let tween = new TWEEN.Tween(position)
-        .to(target, 6000) //control animation duration
-        .easing(TWEEN.Easing.Back.InOut
-
-
+        .to(target, 4000) //control animation duration
+        .easing(TWEEN.Easing.Exponential.InOut
+          // https://sole.github.io/tween.js/examples/03_graphs.html
         )
       tween.onUpdate(function () {
         points.geometry.attributes.position = new THREE.BufferAttribute(
@@ -157,16 +156,16 @@ class Projection extends Component {
   }
 
   setUpCamera() {
-    let { width, height, mnist_embeddings } = this.props
+    let { width, height, bird_embedding } = this.props
 
     let aspect = this.camera.aspect
     let vFOV = this.camera.fov
     let rvFOV = THREE.Math.degToRad(vFOV)
 
-    let xs = mnist_embeddings.map(e => e[0])
+    let xs = bird_embedding.map(e => e[0])
     let min_x = _.min(xs)
     let max_x = _.max(xs)
-    let ys = mnist_embeddings.map(e => e[1])
+    let ys = bird_embedding.map(e => e[1])
     let min_y = _.min(ys)
     let max_y = _.max(ys)
     let data_width = max_x - min_x
@@ -210,7 +209,7 @@ class Projection extends Component {
   }
 
   addPoints() {
-    let { mnist_embeddings, mnist_labels, color_array } = this.props
+    let { bird_embedding, mnist_labels, color_array } = this.props
 
     // split embeddings and labels into chunks to match sprites
     let ranges = []
@@ -221,7 +220,7 @@ class Projection extends Component {
       ranges.push([start, end])
     }
     let embedding_chunks = ranges.map(range =>
-      mnist_embeddings.slice(range[0], range[1])
+      bird_embedding.slice(range[0], range[1])
     )
     let label_chunks = ranges.map(range =>
       mnist_labels.slice(range[0], range[1])
@@ -362,7 +361,7 @@ class Projection extends Component {
     let uniforms = {
       texture: { value: this.textures[0] },
       repeat: { value: new THREE.Vector2(texture_subsize, texture_subsize) },
-      size: { value: 56.0 },
+      size: { value: 100.0 },
     }
 
     let vertex_shader = `
@@ -540,38 +539,39 @@ class Projection extends Component {
     this.init()
   }
 
-  // componentDidUpdate(prevProps) {
-  //   let { width, height } = this.props
-  //   if (width !== prevProps.width || height !== prevProps.height) {
-  //     this.handleResize(width, height)
-  //   }
-  //   if (prevProps.algorithm_choice !== this.props.algorithm_choice) {
-  //     this.changeEmbeddings(
-  //       prevProps.algorithm_choice,
-  //       this.props.algorithm_choice
-  //     )
-  //   }
-  // }
-
-
-  // # NOTE: the below just shows that patching this to change if the user hasnt done
-  // anything worws. Indexing based on integers.
   componentDidUpdate(prevProps) {
     let { width, height } = this.props
     if (width !== prevProps.width || height !== prevProps.height) {
       this.handleResize(width, height)
     }
-
-    // Transition to the next algorithm in the list after 5 seconds
-    if (prevProps.algorithm_choice === prevProps.algorithm_choice) {
-      setTimeout(() => {
-        this.changeEmbeddings(
-          this.props.algorithm_choice,
-          1 // 'tsne_mnist_embeddings'
-        )
-      }, 2000)
+    if (prevProps.algorithm_choice !== this.props.algorithm_choice) {
+      this.changeEmbeddings(
+        prevProps.algorithm_choice,
+        this.props.algorithm_choice
+      )
     }
   }
+
+
+  // // # NOTE: the below just shows that patching this to change if the user hasnt done
+  // // anything worws. Indexing based on integers.
+  // componentDidUpdate(prevProps, prevState) {
+  //   let { width, height, algorithm_choice } = this.props;
+  //   if (width !== prevProps.width || height !== prevProps.height) {
+  //     this.handleResize(width, height);
+  //   }
+
+  //   // Transition to the next algorithm in the list after 5 seconds
+  //   if (algorithm_choice !== prevState.algorithm_choice) {
+  //     setTimeout(() => {
+  //       this.changeEmbeddings(
+  //         algorithm_choice,
+  //         1 // 'tsne_mnist_embeddings'
+  //       );
+  //     }, 2000);
+  //   }
+  // }
+
 
   componentWillUnmount() {
     this.mount.removeChild(this.renderer.domElement)
