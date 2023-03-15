@@ -2,12 +2,25 @@
   box-sizing: border-box;
 }
 
+#side-img {
+  border-radius: 200px;
+}
+
+#label {
+  border-radius: 200px;
+}
+
 html {
-  background: #000;
   font-size: 16px;
   line-height: 1.5;
   color: #fff;
   font-feature-settings: 'tnum';
+  background-image: url("./noise.png"),
+    url("./forest_background.jpg");
+  background-attachment: scroll, fixed;
+  background-position: top center;
+  background-repeat: repeat, no-repeat;
+  background-size: 200px, cover;
 }
 
 code {
