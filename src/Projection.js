@@ -319,7 +319,8 @@ class Projection extends Component {
           tex.r = 1.0;
           tex.g = 1.0;
           tex.b = 1.0;
-          gl_FragColor = tex * vec4(vColor, 1.0);
+          tex.a = 0.1; // controls opacity
+          gl_FragColor = tex * vec4(vColor, 1);
         }`
 
       // material
@@ -327,6 +328,8 @@ class Projection extends Component {
         uniforms: uniforms,
         vertexShader: vertex_shader,
         fragmentShader: fragment_shader,
+        transparent: true,
+        opacity: 0,
       })
 
       // point cloud
