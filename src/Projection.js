@@ -511,8 +511,8 @@ class Projection extends Component {
 
     this.camera = new THREE.PerspectiveCamera(vFOV, aspect, near, far)
 
-    this.renderer = new THREE.WebGLRenderer()
-    this.renderer.setClearColor(0x111111, 1)
+    this.renderer = new THREE.WebGLRenderer({ alpha: true }) // transparent background
+    this.renderer.setClearColor(0xffffff, 0); // transparent background
     this.renderer.setSize(width, height)
     this.mount.appendChild(this.renderer.domElement)
 
