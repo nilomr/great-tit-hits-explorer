@@ -93,9 +93,12 @@ class Projection extends Component {
       }
 
       let tween = new TWEEN.Tween(position)
-        .to(target, 1000)
-        .easing(TWEEN.Easing.Linear.None)
-      tween.onUpdate(function() {
+        .to(target, 6000) //control animation duration
+        .easing(TWEEN.Easing.Back.InOut
+
+
+        )
+      tween.onUpdate(function () {
         points.geometry.attributes.position = new THREE.BufferAttribute(
           position,
           3
