@@ -67,15 +67,17 @@ class Sidebar extends Component {
                 ref={side_canvas => {
                   this.side_canvas = side_canvas
                 }}
+                id='side-img'
                 width={sidebar_image_size}
                 height={sidebar_image_size}
               />
             </div>
             <div style={{ flexGrow: 1 }}>
               <div
+                id="label"
                 style={{
                   background: hover_index
-                    ? `rgb(${color_array[mnist_labels[hover_index]].join(',')})`
+                    ? `rgba(${color_array[mnist_labels[hover_index]].join(',')}, 0.8)` // NOTE This changes the color of the label in the sidebar
                     : 'transparent',
                   color: hover_index ? '#000' : '#fff',
                   padding: p(grem / 4, grem / 2),
