@@ -122,15 +122,18 @@ class Layout extends Component {
       top: 0,
       height: '100vh',
       overflow: 'auto',
-      background: '#222',
+      background: 'transparent',
       display: 'flex',
       flexDirection: 'column',
+      zIndex: 1, // Set the z-index to 1 to place the sidebar on top of the main content
     }
+
     let main_style = {
       position: 'relative',
       height: '100vh',
-      background: '#111',
+      background: 'transparent',
       overflow: 'hidden',
+      zIndex: 0, // Set the z-index to 0 for the main content to be behind the sidebar
     }
 
     let sidebar_image_size, sidebar_orientation
@@ -158,8 +161,8 @@ class Layout extends Component {
       sidebar_image_size = sidebar_style.width
       main_style = {
         ...main_style,
-        width: ww - scaler,
-        left: scaler,
+        width: ww,
+        left: 0,
         height: wh,
       }
       sidebar_orientation = 'vertical'
@@ -170,8 +173,8 @@ class Layout extends Component {
       }
       main_style = {
         ...main_style,
-        width: ww - 300,
-        left: 300,
+        width: ww,
+        left: 0,
         height: wh,
       }
       sidebar_image_size = sidebar_style.width
