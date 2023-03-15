@@ -534,16 +534,36 @@ class Projection extends Component {
     this.init()
   }
 
+  // componentDidUpdate(prevProps) {
+  //   let { width, height } = this.props
+  //   if (width !== prevProps.width || height !== prevProps.height) {
+  //     this.handleResize(width, height)
+  //   }
+  //   if (prevProps.algorithm_choice !== this.props.algorithm_choice) {
+  //     this.changeEmbeddings(
+  //       prevProps.algorithm_choice,
+  //       this.props.algorithm_choice
+  //     )
+  //   }
+  // }
+
+
+  // # NOTE: the below just shows that patching this to change if the user hasnt done
+  // anything worws. Indexing based on integers.
   componentDidUpdate(prevProps) {
     let { width, height } = this.props
     if (width !== prevProps.width || height !== prevProps.height) {
       this.handleResize(width, height)
     }
-    if (prevProps.algorithm_choice !== this.props.algorithm_choice) {
-      this.changeEmbeddings(
-        prevProps.algorithm_choice,
-        this.props.algorithm_choice
-      )
+
+    // Transition to the next algorithm in the list after 5 seconds
+    if (prevProps.algorithm_choice === prevProps.algorithm_choice) {
+      setTimeout(() => {
+        this.changeEmbeddings(
+          this.props.algorithm_choice,
+          1 // 'tsne_mnist_embeddings'
+        )
+      }, 2000)
     }
   }
 
