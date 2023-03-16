@@ -17,19 +17,31 @@ class Data extends Component {
       mnist_labels: null,
     }
   }
-
   scaleEmbeddings(embeddings) {
-    let xs = embeddings.map(e => Math.abs(e[0]))
-    let ys = embeddings.map(e => Math.abs(e[1]))
-    let max_x = _.max(xs)
-    let max_y = _.max(ys)
-    let max = Math.max(max_x, max_y)
-    let scale = d3
-      .scaleLinear()
-      .domain([-max, max])
-      .range([-20, 20])
-    let scaled_embeddings = embeddings.map(e => [scale(e[0]), scale(e[1])])
-    return scaled_embeddings
+    let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+
+    for (let i = 0; i < embeddings.length; i++) {
+      let x = embeddings[i][0];
+      let y = embeddings[i][1];
+
+      if (x < xMin) xMin = x;
+      if (x > xMax) xMax = x;
+      if (y < yMin) yMin = y;
+      if (y > yMax) yMax = y;
+    }
+
+    let xRange = xMax - xMin;
+    let yRange = yMax - yMin;
+    let maxRange = Math.max(xRange, yRange);
+    let xOffset = -0.5 * (xMax + xMin);
+    let yOffset = -0.5 * (yMax + yMin);
+
+    let scaled_embeddings = embeddings.map(e => [
+      40 * (e[0] + xOffset) / maxRange,
+      40 * (e[1] + yOffset) / maxRange,
+    ]);
+
+    return scaled_embeddings;
   }
 
   componentDidMount() {
