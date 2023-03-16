@@ -53,15 +53,6 @@ class Data extends Component {
           bird_embedding: scaled_embeddings,
         })
       })
-    fetch(`${process.env.PUBLIC_URL}/md08_umap_mnist_embeddings.json`)
-      .then(response => response.json())
-      .then(bird_embedding => {
-        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
-        console.log('got em')
-        this.setState({
-          md08_umap_mnist_embeddings: scaled_embeddings,
-        })
-      })
     fetch(`${process.env.PUBLIC_URL}/tsne_mnist_embeddings.json`)
       .then(response => response.json())
       .then(bird_embedding => {
