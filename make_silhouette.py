@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from typing import List, Tuple
 
 import cv2
@@ -5,114 +7,103 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def load_image(image_path: str) -> np.ndarray:
+def load_image(image_path: Path) -> np.ndarray:
     """
-    Loads an image from the specified path.
+    Load an image from a given file path.
 
     Args:
-        image_path: Path of the image file to load.
+        image_path: A path object representing the file path of the image.
 
     Returns:
-        The loaded image as a NumPy array.
+        An NumPy ndarray representing the loaded image.
     """
-    return cv2.imread(image_path)
-
-
-def get_contour(image: np.ndarray) -> np.ndarray:
-    """
-    Finds the largest contour in the image.
-
-    Args:
-        image: The input image.
-
-    Returns:
-        The largest contour as a NumPy array.
-    """
+    image = cv2.imread(str(image_path))
     image = cv2.flip(image, 0)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    return image
 
+
+def compute_masked_points(image: np.ndarray, data_points: int) -> np.ndarray:
+    """
+    Generate random floating point numbers within the canvas of the same size as
+    the input image and keep only those that fall in the black regions of the
+    input image.
+
+    Args:
+        image: A NumPy ndarray representing the input image. data_points: An
+            integer representing the desired number of data points to be generated.
+
+    Returns:
+        A NumPy ndarray representing the masked data points.
+    """
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Compute the mean and standard deviation of the grayscale image
     mean, std = cv2.meanStdDev(gray)
     low_thresh = int(list(mean - (std * 1))[0][0])
 
-    _, gray = cv2.threshold(gray, low_thresh, 255, cv2.THRESH_BINARY)
-    edges = cv2.Canny(gray, low_thresh, 255)
+    # Threshold the grayscale image to obtain a binary mask
+    _, mask = cv2.threshold(gray, low_thresh, 255, cv2.THRESH_BINARY)
 
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    return max(contours, key=cv2.contourArea)
+    h, w = mask.shape
+    masked_points = []
+    while len(masked_points) < data_points:
+        x = np.random.uniform(0, w, data_points - len(masked_points))
+        y = np.random.uniform(0, h, data_points - len(masked_points))
+        points = np.column_stack((x, y))
+        masked_points += list(points[mask[y.astype(int), x.astype(int)] == 0])
+
+    masked_points = np.array(masked_points)
+
+    # If the number of points left after masking is greater than the desired data points, randomly select a subset
+    if masked_points.shape[0] > data_points:
+        masked_points = masked_points[
+            np.random.choice(masked_points.shape[0], data_points, replace=False)
+        ]
+
+    # Scale the data points to be between -50 and 50, centered around 0
+    # masked_points = (masked_points - masked_points.mean()) / masked_points.std() * 50
+
+    return masked_points
 
 
-def get_bounding_box(contour: np.ndarray) -> Tuple[int, int, int, int]:
+def plot_points(points: np.ndarray) -> None:
     """
-    Computes the bounding box of the given contour.
+    Plot the generated points.
 
     Args:
-        contour: The input contour.
+        points: A NumPy ndarray representing the points to be plotted.
 
     Returns:
-        The bounding box as a tuple of (x, y, width, height).
-    """
-    return cv2.boundingRect(contour)
-
-
-def generate_coordinates(
-    contour: np.ndarray, data_points: int
-) -> List[Tuple[int, int]]:
-    """
-    Generates random points inside the given contour.
-
-    Args:
-        contour: The input contour.
-        data_points: The number of points to generate.
-
-    Returns:
-        A list of generated points as tuples of (x, y).
-    """
-    x, y, w, h = get_bounding_box(contour)
-    coordinates = []
-    while len(coordinates) < data_points:
-        point = (np.random.randint(x, x + w), np.random.randint(y, y + h))
-        if cv2.pointPolygonTest(contour, point, False) > 0:
-            coordinates.append(point)
-
-    # center the coordinates around 0:
-    x_mean = np.mean([x[0] for x in coordinates])
-    y_mean = np.mean([x[1] for x in coordinates])
-    coordinates = [(x[0] - x_mean, x[1] - y_mean) for x in coordinates]
-    return coordinates
-
-
-def plot_coordinates(coordinates: List[Tuple[int, int]]) -> None:
-    """
-    Plots the given coordinates as a scatter plot.
-
-    Args:
-        coordinates: The coordinates to plot as a list of tuples of (x, y).
-
-    Returns:
-        None
+        None.
     """
     plt.figure(figsize=(10, 10))
-    plt.scatter([x[0] for x in coordinates], [x[1] for x in coordinates], s=2)
+    plt.scatter(points[:, 0], points[:, 1], s=1)
     plt.show()
 
 
-def coordinates_from_image(
-    image_path: str, data_points: int, plot: bool = False
-) -> List[List[int]]:
+def save_points_to_json(points: np.ndarray, out_path: Path) -> None:
     """
-    Generates random points inside the largest contour of the image.
+    Save the generated points to a JSON file.
 
     Args:
-        image_path: Path of the image file to load.
-        data_points: The number of points to generate.
+        points: A NumPy ndarray representing the points to be saved.
+        out_path: A Path object representing the file path of the output JSON
+            file.
 
     Returns:
-        None
+        None.
     """
+    with open(out_path, "w") as outfile:
+        json.dump(points.tolist(), outfile)
+
+
+if __name__ == "__main__":
+    # Define the input image path and the number of desired data points
+    root = Path(__file__).parent
+    image_path = root / "public" / "bird.png"
+    data_points = 70000
+
     image = load_image(image_path)
-    contour = get_contour(image)
-    coordinates = generate_coordinates(contour, data_points)
-    if plot:
-        plot_coordinates(coordinates)
-    return [list(i) for i in coordinates]
+    points = compute_masked_points(image, data_points)
+    plot_points(points)
+    save_points_to_json(points, root / "public" / "bird_embedding.json")
