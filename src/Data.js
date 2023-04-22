@@ -6,7 +6,7 @@ import * as d3 from 'd3'
 let algorithm_options = ['UMAP', 'T-SNE']
 let algorithm_embedding_keys = [
   'bird_embedding',
-  'tsne_mnist_embeddings'
+  'greti_embeddings'
 ]
 
 class Data extends Component {
@@ -14,10 +14,10 @@ class Data extends Component {
     super(props)
     this.state = {
       bird_embedding: null,
-      mnist_labels: null,
+      greti_labels: null,
     }
   }
-  scaleEmbeddings(embeddings) {
+  scaleEmbeddings(embeddings, scale) {
     let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
 
     for (let i = 0; i < embeddings.length; i++) {
@@ -37,42 +37,42 @@ class Data extends Component {
     let yOffset = -0.5 * (yMax + yMin);
 
     let scaled_embeddings = embeddings.map(e => [
-      40 * (e[0] + xOffset) / maxRange,
-      40 * (e[1] + yOffset) / maxRange,
+      scale * (e[0] + xOffset) / maxRange,
+      scale * (e[1] + yOffset) / maxRange,
     ]);
 
     return scaled_embeddings;
   }
 
   componentDidMount() {
-    fetch(`${process.env.PUBLIC_URL}/bird_embedding.json`)
+    fetch(`${process.env.PUBLIC_URL}/greti_random.json`)
       .then(response => response.json())
       .then(bird_embedding => {
-        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
+        let scaled_embeddings = this.scaleEmbeddings(bird_embedding, 60)
         this.setState({
           bird_embedding: scaled_embeddings,
         })
       })
-    fetch(`${process.env.PUBLIC_URL}/tsne_mnist_embeddings.json`)
+    fetch(`${process.env.PUBLIC_URL}/greti_embeddings.json`)
       .then(response => response.json())
       .then(bird_embedding => {
-        let scaled_embeddings = this.scaleEmbeddings(bird_embedding)
+        let scaled_embeddings = this.scaleEmbeddings(bird_embedding, 50)
         this.setState({
-          tsne_mnist_embeddings: scaled_embeddings,
+          greti_embeddings: scaled_embeddings,
         })
       })
-    fetch(`${process.env.PUBLIC_URL}/mnist_labels.json`)
+    fetch(`${process.env.PUBLIC_URL}/greti_labels.json`)
       .then(response => response.json())
-      .then(mnist_labels =>
+      .then(greti_labels =>
         this.setState({
-          mnist_labels: mnist_labels,
+          greti_labels: greti_labels,
         })
       )
   }
 
   render() {
     console.log(this.state)
-    return this.state.bird_embedding && this.state.mnist_labels ? (
+    return this.state.bird_embedding && this.state.greti_labels ? (
       <Layout
         {...this.state}
         algorithm_options={algorithm_options}

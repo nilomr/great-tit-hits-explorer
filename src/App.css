@@ -1,57 +1,9 @@
 * {
   box-sizing: border-box;
+  max-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
 }
-
-.sidebar {
-  margin: 1em;
-}
-
-.side-img {
-  border-radius: 400px;
-  width: 100%;
-}
-
-#label {
-  border-radius: 10px;
-}
-
-.toggle-projection {
-  border-radius: 10px;
-  position: relative;
-  display: block;
-  width: 200px;
-  height: 25px;
-  background-color: #368ea8bb;
-  text-decoration: none;
-  text-align: center;
-  margin-bottom: 1em;
-  margin-top: 1em;
-  transition: background-color 0.05s ease-in-out;
-}
-
-.toggle-projection:hover {
-  background-color: #368da8;
-
-}
-
-/* add rule for when media is mless than 800px: */
-
-
-@media (min-width: 800px) {
-  .toggle-projection {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
-/* @media (max-width: 800px) {
-  .toggle-projection {
-    left: auto;
-    transform: translateX(0);
-    display: block;
-  }
-} */
-
 
 html {
   font-size: 16px;
@@ -95,10 +47,248 @@ img {
   max-width: 100%;
 }
 
+
+
+#side-img {
+  border-radius: 500px;
+  margin: 1em;
+}
+
+/* test */
+
+#root, #general {
+  width: 100%;
+  height: 100%;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: #ffffff17;
+}
+
+#sidebar-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20vw;
+  max-width: 250px;
+  min-width: 200px;
+  min-height: fit-content;
+  /* new property */
+  overflow: auto;
+  background: transparent;
+  background-color: #2e3031c2;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  margin: 1em;
+}
+
+#main-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
+  margin: 1em;
+  max-width: 100%;
+}
+
+.horizontal-divider {
+  border: 0.5px solid #c7c7c78a;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+#toggle-projection, #about-main, #label-id, #index-id {
+  position: relative;
+  display: block;
+  display: flex;
+  color: #dbdbdb;
+  text-decoration: none;
+  justify-content: space-between;
+  transition: all 0.1s linear;
+  text-align: center;
+  margin-bottom: .5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: #505355c2;
+  border-radius: 8px;
+}
+
+.h-button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+}
+
+.h-button-container button {
+  flex: 1;
+  box-sizing: border-box;
+}
+
+
+.v-button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: column;
+}
+
+.v-button-container button {
+  flex: 1;
+  box-sizing: border-box;
+}
+
+#toggle-projection,
+#about-main {
+  display: inline-block;
+  width: 49%;
+  transition: background-color 0.05s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#toggle-projection {
+  margin-right: 2px;
+}
+
+#about-main {
+  margin-left: 2px;
+}
+
+#toggle-projection:hover,
+#about-main:hover {
+  background-color: #acacac;
+
+}
+
+#label-id {
+  display: flex;
+  justify-content: space-between;
+  transition: all 0.1s linear;
+}
+
+
+
+
+footer {
+  background: transparent;
+  padding: 1em;
+  bottom: 0;
+  position: absolute;
+}
+
+.footer-container {
+  display: flex;
+  align-items: left;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 12pt;
+  color: #dbdbdb;
+  flex-direction: column;
+}
+
+.footer-container p {
+  margin: 0;
+  padding: 0;
+  color: #c2c2c2;
+  font-size: 0.8em;
+}
+
+.footer-container button {
+  color: rgb(201, 201, 201);
+  font-weight: 600;
+}
+
+.footer-container button:hover {
+  color: #a3a3a3;
+}
+
+
+/* mobile */
+
+@media (max-width: 768px) {
+
+
+
+  #sidebar-inner {
+    top: 0;
+    width: 100%;
+    min-width: 400px;
+    z-index: 1;
+    margin: 0;
+    background-color: transparent;
+    column-gap: 10px;
+    flex-direction: row;
+
+  }
+
+  #side-img {
+    display: none;
+
+  }
+
+  .horizontal-divider {
+    display: none;
+  }
+
+  #main-buttons {
+    margin: 1em;
+    flex-direction: row;
+    column-gap: 6px;
+  }
+
+  .h-button-container {
+    /* so that it fits the size of the text */
+    width: fit-content;
+    min-width: 166px;
+  }
+
+  .v-button-container {
+    min-width: 150px;
+  }
+
+  #about-main {
+    margin-left: 3px;
+  }
+
+  #toggle-projection {
+    margin-right: 3px;
+  }
+}
+
+/* MAIN DATA CANVAS ───────────────────────────────────────────────────────── */
+
+#main {
+  position: relative;
+  background: transparent;
+  overflow: hidden;
+  z-index: 0;
+  left: 0;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  /* send to back:; */
+  z-index: 0;
+}
+
 /**
  * Reset button styles.
  * It takes a bit of work to achieve a neutral look.
  */
+
 button {
   padding: 0;
   border: none;
@@ -106,5 +296,96 @@ button {
   color: inherit;
   background-color: transparent;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+/* about window */
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(8, 8, 8, 0.774);
+  color: #dbdbdb;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s ease-in-out;
+  overflow-y: visible;
+  overflow: visible;
+  z-index: 999;
+}
+
+.popup-container.visible {
+  visibility: visible;
+  overflow: visible;
+  opacity: 1;
+}
+
+.popup-content {
+  background-color: #2e3031c2;
+  border-radius: 10px;
+  padding: 30px;
+  font-size: 12pt;
+  box-shadow: 0 0 60px rgb(0, 0, 0);
+  max-width: 700px;
+  max-height: 90% !important;
+  overflow-y: scroll !important;
+  text-align: left;
+  position: relative;
+}
+
+.popup-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background: #555555d5;
+  border-radius: 20px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.048);
+}
+
+.popup-content li, .popup-content p, .popup-content a, .popup-content h1, .popup-content h2, .popup-content h3, .popup-content h4, .popup-content h5, .popup-content h6 {
+  color: #dbdbdb !important;
+}
+
+.close-button {
+  position: absolute;
+  color: #555;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  /* Remove underline */
+  transition: filter 0.1s ease-in-out;
+  /* Add transition */
+}
+
+.close-button:hover {
+  filter: brightness(2);
+  /* Make brighter on hover */
+}
+
+
+@media screen and (max-width: 768px) {
+  .popup-content {
+    width: 100vw;
+    padding: 1em;
+  }
+
+  .close-button {
+    font-size: 1.2rem;
+    padding: .5em;
+    top: 5px;
+    right: 5px;
+  }
 }

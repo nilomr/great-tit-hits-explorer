@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import AboutPopup from './About'
 
 class Sidebar extends Component {
   componentDidMount() {
@@ -18,6 +19,21 @@ class Sidebar extends Component {
     this.props.selectAlgorithm(algorithm_options[newChoice])
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      showAbout: false,
+    };
+  }
+
+  handleAboutButtonClick = () => {
+    this.setState({ showAbout: true });
+  }
+
+  handlePopupClose = () => {
+    this.setState({ showAbout: false });
+  }
+
   render() {
     let {
       sidebar_orientation,
@@ -25,92 +41,60 @@ class Sidebar extends Component {
       grem,
       p,
       hover_index,
-      mnist_labels,
+      greti_labels,
       color_array,
       algorithm_options,
       algorithm_choice,
     } = this.props
 
+    const { showAbout } = this.state;
+
     return (
-      <div class='sidebar'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          flexGrow: 1,
-        }}
-      >
-        <div>
-          {' '}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection:
-                sidebar_orientation === 'horizontal' ? 'row' : 'column',
-            }}
-          >
-            <div>
-              <canvas
-                ref={side_canvas => {
-                  this.side_canvas = side_canvas
-                }}
-                class='side-img'
-                width={sidebar_image_size}
-                height={sidebar_image_size}
-              />
-            </div>
 
+      <div id='sidebar-inner'>
 
-            <div style={{ flexGrow: 1 }}>
-              <button
-                class='toggle-projection'
-                onClick={this.handleToggleProjection}
-              >
-                START
-              </button>
+        <canvas
+          ref={side_canvas => {
+            this.side_canvas = side_canvas
+          }}
+          width={sidebar_image_size}
+          height={sidebar_image_size}
+          id='side-img'
+        />
+        <div id='main-buttons'>
 
-              <div
-                id="label"
-                style={{
-                  background: hover_index
-                    ? `rgba(${color_array[mnist_labels[hover_index]].join(',')}, 0.8)` // NOTE This changes the color of the label in the sidebar
-                    : 'transparent',
-                  color: hover_index ? '#000' : '#fff',
-                  padding: p(grem / 4, grem / 2),
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  transition: 'all 0.1s linear',
-                }}
-              >
-                <div>Label:</div>
-                {hover_index ? <div>{mnist_labels[hover_index]}</div> : null}
-              </div>
-              <div
-                style={{
-                  padding: p(grem / 4, grem / 2),
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                Index:
-                {hover_index ? <div>{hover_index}</div> : null}
-              </div>
+          <div class="h-button-container">
+            <button id='toggle-projection' onClick={this.handleToggleProjection}>Start</button>
+            <div id='about-main'>
+              <button onClick={this.handleAboutButtonClick}>About</button>
+              <AboutPopup visible={this.state.showAbout} onClose={this.handlePopupClose} />
             </div>
           </div>
-        </div>
-        <div style={{ padding: grem / 2 }}>
-          <div>
-            An interactive UMAP visualization of the MNIST data set.{' '}
-            <button
-              onClick={() => {
-                this.props.toggleAbout(true)
+
+          <hr class='horizontal-divider' />
+          <div class="v-button-container">
+            <div
+              id="label-id"
+              style={{
+                background: hover_index
+                  ? `rgba(${color_array[greti_labels[hover_index]].join(',')}, 0.4)` // NOTE This changes the color of the label in the sidebar
+                  : 'null', // set color here if you want a default color
+                color: hover_index // ? '#000' : '#fff'
               }}
             >
-              About
-            </button>
+              <div>Label:</div>
+              {hover_index ? <div>{greti_labels[hover_index]}</div> : null}
+            </div>
+            <div id='index-id'>
+              Index:
+              {hover_index ? <div>{hover_index}</div> : null}
+            </div>
           </div>
         </div>
       </div>
+
+
+
     )
   }
 }

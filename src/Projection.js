@@ -12,12 +12,12 @@ let sprite_image_size = 28
 // actual sprite size needs to be power of 2
 let sprite_actual_size = 2048
 
-let mnist_tile_string = 'mnist_tile_solid_'
-let mnist_tile_locations = [...Array(sprite_number)].map(
-  (n, i) => `${process.env.PUBLIC_URL}/${mnist_tile_string}${i}.png`
+let greti_tile_string = 'greti_tile_solid_'
+let greti_tile_locations = [...Array(sprite_number)].map(
+  (n, i) => `${process.env.PUBLIC_URL}/${greti_tile_string}${i}.png`
 )
 
-let mnist_images = mnist_tile_locations.map(src => {
+let greti_images = greti_tile_locations.map(src => {
   let img = document.createElement('img')
   img.src = src
   return img
@@ -59,7 +59,7 @@ class Projection extends Component {
   }
 
   changeEmbeddings(prev_choice, new_choice) {
-    // assumes mnist embeddings has been updated
+    // assumes greti embeddings has been updated
 
     let ranges = []
     for (let i = 0; i < sprite_number; i++) {
@@ -179,14 +179,14 @@ class Projection extends Component {
 
     let camera_z_start
     if (data_aspect > aspect) {
-      // console.log("width is limiter");
-      // camera_z_start = max_x_from_center / Math.tan(rvFOV / 2) / aspect
+      console.log("width is limiter");
+      camera_z_start = max_x_from_center / Math.tan(rvFOV / 2) / aspect
     } else {
-      // console.log("height is limiter");
-      // camera_z_start = max_y_from_center / Math.tan(rvFOV / 2)
+      console.log("height is limiter");
+      camera_z_start = max_y_from_center / Math.tan(rvFOV / 2)
     }
 
-    camera_z_start = max_center / Math.tan(rvFOV / 2)
+    // camera_z_start = max_center / Math.tan(rvFOV / 2)
 
     let far = camera_z_start * 1.25
     this.camera.far = far
@@ -209,7 +209,7 @@ class Projection extends Component {
   }
 
   addPoints() {
-    let { bird_embedding, mnist_labels, color_array } = this.props
+    let { bird_embedding, greti_labels, color_array } = this.props
 
     // split embeddings and labels into chunks to match sprites
     let ranges = []
@@ -223,12 +223,12 @@ class Projection extends Component {
       bird_embedding.slice(range[0], range[1])
     )
     let label_chunks = ranges.map(range =>
-      mnist_labels.slice(range[0], range[1])
+      greti_labels.slice(range[0], range[1])
     )
 
     // load the textures
     let loader = new THREE.TextureLoader()
-    this.textures = mnist_tile_locations.map(l => {
+    this.textures = greti_tile_locations.map(l => {
       let t = loader.load(l)
       t.flipY = false
       t.magFilter = THREE.NearestFilter
@@ -320,7 +320,7 @@ class Projection extends Component {
           tex.b = 1.0;
           tex.a = 0.1; // controls opacity
           gl_FragColor = tex * vec4(vColor, 1);
-        }`
+        }` // NOTE: 0.1; // controls opacity
 
       // material
       let material = new THREE.ShaderMaterial({
@@ -361,7 +361,7 @@ class Projection extends Component {
     let uniforms = {
       texture: { value: this.textures[0] },
       repeat: { value: new THREE.Vector2(texture_subsize, texture_subsize) },
-      size: { value: 100.0 },
+      size: { value: 80.0 }, // NOTE: controls size of highlighted point
     }
 
     let vertex_shader = `
@@ -470,7 +470,7 @@ class Projection extends Component {
 
       sidebar_ctx.fillRect(0, 0, sidebar_image_size, sidebar_image_size)
       sidebar_ctx.drawImage(
-        mnist_images[sprite_index],
+        greti_images[sprite_index],
         // source rectangle
         (digit_index % sprite_side) * sprite_image_size,
         Math.floor(digit_index / sprite_side) * sprite_image_size,
@@ -566,7 +566,7 @@ class Projection extends Component {
   //     setTimeout(() => {
   //       this.changeEmbeddings(
   //         algorithm_choice,
-  //         1 // 'tsne_mnist_embeddings'
+  //         1 // 'greti_embeddings'
   //       );
   //     }, 2000);
   //   }
@@ -580,8 +580,7 @@ class Projection extends Component {
   render() {
     let { width, height } = this.props
     return (
-      <div
-        style={{ width: width, height: height, overflow: 'hidden' }}
+      <div style={{ width: width, height: height, overflow: 'hidden' }}
         ref={mount => {
           this.mount = mount
         }}

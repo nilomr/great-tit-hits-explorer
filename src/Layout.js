@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from './Sidebar'
 import Projection from './Projection'
-import About from './About'
+import AboutPopup from './About'
 import * as _ from 'lodash'
 
 // padding constructor
@@ -37,7 +37,6 @@ class Layout extends Component {
     this.setSize = _.debounce(this.setSize.bind(this), 200)
     this.checkHash = this.checkHash.bind(this)
     this.setSidebarCanvas = this.setSidebarCanvas.bind(this)
-    this.toggleAbout = this.toggleAbout.bind(this)
     this.selectAlgorithm = this.selectAlgorithm.bind(this)
   }
 
@@ -57,16 +56,6 @@ class Layout extends Component {
     let ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
     this.sidebar_ctx = ctx
-  }
-
-  toggleAbout(state) {
-    if (state === true) {
-      window.history.pushState(null, 'About UMAP Explorer', '#about')
-      this.setState({ show_about: true })
-    } else if (state === false) {
-      window.history.pushState(null, 'UMAP Explorer', window.location.pathname)
-      this.setState({ show_about: false })
-    }
   }
 
   setHoverIndex(hover_index) {
@@ -95,12 +84,22 @@ class Layout extends Component {
     window.removeEventListener('resize', this.setSize)
   }
 
+
+
+  handleAboutButtonClick = () => {
+    this.setState({ showAbout: true });
+  }
+
+  handlePopupClose = () => {
+    this.setState({ showAbout: false });
+  }
+
   render() {
     let {
       bird_embedding,
-      tsne_mnist_embeddings,
-      md08_umap_mnist_embeddings,
-      mnist_labels,
+      greti_embeddings,
+      md08_umap_greti_embeddings,
+      greti_labels,
       algorithm_options,
       algorithm_embedding_keys,
     } = this.props
@@ -108,94 +107,37 @@ class Layout extends Component {
       ww,
       wh,
       hover_index,
-      show_about,
       algorithm_choice,
     } = this.state
+
+    const { showAbout } = this.state;
     let sidebar_ctx = this.sidebar_ctx
-
     let line_height = 1.5
-
+    let scaler = 200 + (300 - 200) * ((ww - 768) / 600)
     let sidebar_style = {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      height: '100vh',
-      overflow: 'auto',
-      background: 'transparent',
-      display: 'flex',
-      flexDirection: 'column',
-      zIndex: 1, // Set the z-index to 1 to place the sidebar on top of the main content
+      width: scaler,
     }
 
     let main_style = {
-      position: 'relative',
-      height: '100vh',
-      background: 'transparent',
-      overflow: 'hidden',
-      zIndex: 0, // Set the z-index to 0 for the main content to be behind the sidebar
+      width: ww,
+      left: 0,
+      height: wh,
     }
 
-    let sidebar_image_size, sidebar_orientation
+    let sidebar_image_size = sidebar_style.width
+    let sidebar_orientation = 'vertical'
     let font_size = 16
-    if (ww < 800) {
-      font_size = 14
-      sidebar_style = {
-        ...sidebar_style,
-        flexDirection: 'row',
-        width: '100%',
-        top: 'auto',
-        height: 'auto',
-        bottom: 0,
-      }
-      main_style = { width: ww, height: wh }
-      sidebar_image_size = font_size * line_height * 3
-      sidebar_orientation = 'horizontal'
-    } else if (ww < 800 + 600) {
-      let scaler = 200 + (300 - 200) * ((ww - 800) / 600)
-      font_size = 14 + 2 * ((ww - 800) / 600)
-      sidebar_style = {
-        ...sidebar_style,
-        width: scaler,
-      }
-      sidebar_image_size = sidebar_style.width
-      main_style = {
-        ...main_style,
-        width: ww,
-        left: 0,
-        height: wh,
-      }
-      sidebar_orientation = 'vertical'
-    } else {
-      sidebar_style = {
-        ...sidebar_style,
-        width: 300,
-      }
-      main_style = {
-        ...main_style,
-        width: ww,
-        left: 0,
-        height: wh,
-      }
-      sidebar_image_size = sidebar_style.width
-      sidebar_orientation = 'vertical'
-    }
 
     let grem = font_size * line_height
 
-    let general_style = {
-      fontSize: font_size,
-      lineHeight: line_height,
-    }
-
     return ww !== null ? (
-      <div style={general_style}>
-        <div
-          style={sidebar_style}
+      <div id='general' >
+        <div id='sidebar'
           ref={sidebar_mount => {
             this.sidebar_mount = sidebar_mount
           }}
         >
-          <Sidebar class='sidebar'
+          <Sidebar
             sidebar_orientation={sidebar_orientation}
             sidebar_image_size={sidebar_image_size}
             grem={grem}
@@ -203,21 +145,21 @@ class Layout extends Component {
             color_array={color_array}
             setSidebarCanvas={this.setSidebarCanvas}
             hover_index={hover_index}
-            mnist_labels={mnist_labels}
-            toggleAbout={this.toggleAbout}
+            greti_labels={greti_labels}
             algorithm_options={algorithm_options}
             algorithm_choice={algorithm_choice}
             selectAlgorithm={this.selectAlgorithm}
           />
         </div>
-        <div class='main' style={main_style}>
+
+        <div id='main' style={main_style} >
           <Projection
             width={main_style.width}
             height={main_style.height}
             bird_embedding={bird_embedding}
-            tsne_mnist_embeddings={tsne_mnist_embeddings}
-            md08_umap_mnist_embeddings={md08_umap_mnist_embeddings}
-            mnist_labels={mnist_labels}
+            greti_embeddings={greti_embeddings}
+            md08_umap_greti_embeddings={md08_umap_greti_embeddings}
+            greti_labels={greti_labels}
             color_array={color_array}
             sidebar_ctx={sidebar_ctx}
             sidebar_image_size={sidebar_image_size}
@@ -226,10 +168,17 @@ class Layout extends Component {
             algorithm_choice={algorithm_choice}
           />
         </div>
-        {show_about ? (
-          <About grem={grem} p={p} toggleAbout={this.toggleAbout} />
-        ) : null}
-      </div>
+
+        <footer>
+          <div class="footer-container">
+            <p>An interactive visualization of the Wytham great tit dataset.</p>
+            <p>© <a href="https://nilomr.github.io" target="_blank">Nilo Merino Recalde</a> 2023 | based on work by <a href="https://grantcuster.com" target="_blank">Grant Custer</a></p>
+          </div>
+        </footer>
+
+
+
+      </div >
     ) : (
       <div style={{ padding: '1rem' }}>Loading layout...</div>
     )
